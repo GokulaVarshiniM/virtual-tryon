@@ -5,10 +5,7 @@ import numpy as np
 import mediapipe as mp
 import time
 
-root = tk.Tk()
-frame_width = root.winfo_screenwidth()
-frame_height = root.winfo_screenheight()
-root.destroy()  
+
 ID = 0
 cooldown = 2  # Cooldown time in seconds
 last_shirt_change = 0  # Timestamp of last shirt change
@@ -21,24 +18,43 @@ class App:
 
         global offset
         self.cap = VideoCapture()
-
+       
+        self.window.attributes('-fullscreen', True)  
+        self.window.bind('<Escape>', self.exit_fullscreen) 
         self.frame = tk.Frame(window)
         self.frame.place(relx=0.44, rely=0.05, anchor='n')
 
-        self.canvas = tk.Canvas(self.frame, width=self.cap.width, height=self.cap.height)
-        self.canvas.pack()
+        # self.canvas = tk.Canvas(self.frame, width=self.cap.width, height=self.cap.height)
+        # self.canvas.pack()
+
+        self.canvas = tk.Canvas(self.window, width=self.window.winfo_screenwidth(), height=self.window.winfo_screenheight())
+        self.canvas.pack(fill=tk.BOTH, expand=True)  # Make the canvas fill the entire window
+
 
         self.delay = 5
         self.update()
 
         self.window.mainloop()
 
+    def exit_fullscreen(self, event=None):
+        self.window.attributes('-fullscreen', False)
+
     def update(self):
-        _, frame = self.cap.get_frame()
-        if _:
+        ret, frame = self.cap.get_frame()
+        if ret:
+            # Resize the frame to fit the canvas dimensions
+            frame = cv2.resize(frame, (self.window.winfo_screenwidth(), self.window.winfo_screenheight()))
             self.photo = PIL.ImageTk.PhotoImage(image=PIL.Image.fromarray(frame))
             self.canvas.create_image(0, 0, image=self.photo, anchor=tk.NW)
         self.window.after(self.delay, self.update)
+
+
+    # def update(self):
+    #     _, frame = self.cap.get_frame()
+    #     if _:
+    #         self.photo = PIL.ImageTk.PhotoImage(image=PIL.Image.fromarray(frame))
+    #         self.canvas.create_image(0, 0, image=self.photo, anchor=tk.NW)
+    #     self.window.after(self.delay, self.update)
 
 class VideoCapture:
     def __init__(self):
@@ -46,8 +62,12 @@ class VideoCapture:
         if not self.cap.isOpened():
             print("Unable to open Camera.")
 
-        self.width = frame_width
-        self.height = frame_height
+        # self.width = frame_width
+        # self.height = frame_height
+
+        self.width = int(self.cap.get(cv2.CAP_PROP_FRAME_WIDTH))
+        self.height = int(self.cap.get(cv2.CAP_PROP_FRAME_HEIGHT))
+
 
         # Initialize Mediapipe Hands
         self.mp_hands = mp.solutions.hands
