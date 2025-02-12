@@ -7,9 +7,9 @@ import time
 
 # Global variable for the active shirt.
 ID = 0                    
-cooldown = 1.0            # Dwell time (in seconds) for selection
-last_shirt_change = 0     # Timestamp of last shirt change
-offset = 10               # (Used for face-detection overlay)
+cooldown = 1.0            
+last_shirt_change = 0     
+offset = 10               
 
 class App:
     def __init__(self, window, window_title):
@@ -24,9 +24,8 @@ class App:
         self.preview_width = 500
         self.preview_height = 300
         # Position the preview at the right top.
-        self.preview_x = self.screen_width - self.preview_width - 20  # 20-pixel margin from right
-        self.preview_y = 20  # 20-pixel margin from top
-        
+        self.preview_x = self.screen_width - self.preview_width - 20  
+        self.preview_y = 20  
         # List of available shirts.
         self.shirts_list = ['tshirt4.jpg', 'top4.jpg', 'tshirt3.png', 'tshirt2.png', 'tshirt1.png']
 
@@ -43,14 +42,12 @@ class App:
         self.canvas = tk.Canvas(self.window, width=self.screen_width,
                                 height=self.screen_height)
         self.canvas.pack(fill=tk.BOTH, expand=True)
-        
-        # Create the preview canvas.
-        # Use a unique background color ('magenta' in this example) and tell Tkinter to treat it as transparent.
+       
         self.preview_canvas = tk.Canvas(self.window, width=self.preview_width,
                                         height=self.preview_height, highlightthickness=0, bg='white')
         self.preview_canvas.place(x=self.preview_x, y=self.preview_y)
         
-        # Cache for the preview image.
+       
         self.preview_photo = None
 
         self.delay = 5
@@ -68,9 +65,9 @@ class App:
             self.photo = PIL.ImageTk.PhotoImage(image=PIL.Image.fromarray(frame))
             self.canvas.create_image(0, 0, image=self.photo, anchor=tk.NW)
             
-            # Update the preview canvas.
+      
             self.preview_canvas.delete("all")
-            # Draw a white background for the preview section.
+           
             self.preview_canvas.create_rectangle(0, 0, self.preview_width, self.preview_height, 
                                                 fill="white", outline="")
 
@@ -82,12 +79,12 @@ class App:
             img = cv2.imread(shirt_file)
             if img is not None:
                 img_rgb = cv2.cvtColor(img, cv2.COLOR_BGR2RGB)
-                # --- Maintain Aspect Ratio ---
+             
                 orig_h, orig_w = img_rgb.shape[:2]
-                # Define margins to leave space for arrow markers.
+               
                 arrow_margin = 40
                 arrow_size = 20
-                margin_space = arrow_margin + arrow_size + 5  # extra breathing room
+                margin_space = arrow_margin + arrow_size + 5  
                 available_width = self.preview_width - 2 * margin_space
                 available_height = self.preview_height - 2 * margin_space
                 scale = min(available_width / orig_w, available_height / orig_h)
@@ -99,7 +96,7 @@ class App:
                 self.preview_canvas.create_image(self.preview_width // 2, self.preview_height // 2, 
                                                 image=self.preview_photo, anchor=tk.CENTER)
             
-            # --- Draw Arrow Indicators with Extra Margin ---
+          
             arrow_margin = 40
             arrow_size = 20
             # Left arrow (points left)
@@ -313,7 +310,7 @@ class VideoCapture:
 
     @staticmethod
     def count_raised_fingers(hand_landmarks):
-        # (Not used; kept for reference.)
+       
         finger_tips = [8, 12, 16, 20]
         finger_pips = [6, 10, 14, 18]
         thumb_up = hand_landmarks.landmark[4].x < hand_landmarks.landmark[3].x
